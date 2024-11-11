@@ -69,6 +69,7 @@ const Header = () => {
               </Button>
             )}
             <UserButton
+            key={user?.unsafeMetadata?.role}
               appearance={{
                 elements: {
                   avatarBox: "w-10 h-10",

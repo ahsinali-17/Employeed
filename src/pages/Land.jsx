@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import companies from "../data/companies.json";
 import Faq from "../data/faq.json";
 import Autoplay from "embla-carousel-autoplay";
+import { useUser } from "@clerk/clerk-react";
 import {
   Carousel,
   CarouselContent,
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/accordion";
 
 const LandingPage = () => {
+  const { isLoaded, user } = useUser();
   return (
     <>
       <main className="flex flex-col gap-10 sm:gap-20 py-10 sm:py-20">
@@ -43,7 +45,7 @@ const LandingPage = () => {
             </Button>
           </Link>
           <Link to="/post-job">
-            <Button variant="destructive" size="xl">
+            <Button variant="destructive" size="xl"disabled={isLoaded && user?.unsafeMetadata?.role === 'candidate'}>
               Post a Job
             </Button>
           </Link>
