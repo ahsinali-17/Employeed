@@ -144,6 +144,7 @@ const schema = z.object({
           {errors.resume && (
             <p className="text-red-500">{errors.resume.message}</p>
           )}
+          
           {errorApply?.message && (
             <p className="text-red-500">{errorApply?.message}</p>
           )}

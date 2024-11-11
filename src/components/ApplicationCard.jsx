@@ -13,9 +13,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Boxes, BriefcaseBusiness, Download, School } from "lucide-react";
+import {
+  Boxes,
+  BriefcaseBusiness,
+  Download,
+  School,
+  Trash2,
+} from "lucide-react";
 import useFetch from "@/hooks/useFetch";
-import { updateApplication } from "@/api/apiApplications";
+import { deleteApplication, updateApplication } from "@/api/apiApplications";
 
 const ApplicationCard = ({ jobFn, application, isCandidate = false }) => {
   const {
@@ -23,6 +29,12 @@ const ApplicationCard = ({ jobFn, application, isCandidate = false }) => {
     loading: updatingApplicationLoading,
     fn: updateApplicationFn,
   } = useFetch(updateApplication, { job_id: application.job_id });
+
+  const {
+    data: delAppData,
+    loading: delAppLoading,
+    fn: delAppFn,
+  } = useFetch(deleteApplication);
 
   const handleApplicationStatus = async (value) => {
     updateApplicationFn(value).then(() => jobFn());
@@ -35,16 +47,33 @@ const ApplicationCard = ({ jobFn, application, isCandidate = false }) => {
           Updating Status...
         </p>
       )}
-      <Card>
+      <Card className="border-y-2 border-x-0 border-white">
         <CardHeader className="flex flex-row justify-between items-center">
           <CardTitle>
             {isCandidate
               ? `${application?.job?.title} at ${application?.job?.company?.name}`
               : `${application.name}`}
           </CardTitle>
-          <a href={application?.resume} target="_blank">
-            <Download className="bg-white text-black w-8 h-8 p-3 rounded-full cursor-pointer" />
-          </a>
+          <div className="flex gap-4 items-center">
+            <a href={application?.resume} target="_blank">
+              <Download className="bg-white text-black w-8 h-8 p-3 rounded-full cursor-pointer" />
+            </a>
+            {isCandidate && (
+              <Trash2
+                fill=""
+                stroke="white"
+                size={24}
+                className={`text-red-300  ${
+                  delAppLoading
+                    ? "opacity-50 cursor-progress"
+                    : "opacity-100 cursor-pointer"
+                }`}
+                onClick={() => {
+                  delAppFn(application.id).then(() => jobFn());
+                }}
+              ></Trash2>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-4 flex-1">
           <div className="flex flex-col md:flex-row justify-between">

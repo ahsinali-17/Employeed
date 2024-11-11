@@ -7,13 +7,13 @@ import {
   CardTitle,
 } from "./ui/card";
 import useFetch from "@/hooks/useFetch";
-import { saveJob } from "@/api/apijobs";
+import { deleteJob, saveJob } from "@/api/apijobs";
 import { useUser } from "@clerk/clerk-react";
-import { HeartIcon, MapPinIcon, Trash2Icon } from "lucide-react";
+import { HeartIcon, MapPinIcon, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 
-const JobCard = ({ job, isMyJob = false, isSavedCard, onJobSave =()=>{} }) => { //no definition of onJobSave in the whole structue so have to define it as empty function.
+const JobCard = ({ job, isMyJob = false, isSavedCard, onJobSave =()=>{}, jobFn = ()=>{} }) => { //no definition of onJobSave in the whole structue so have to define it as empty function.
   const { user } = useUser();
   const [saved, setsaved] = useState(isSavedCard)
 
@@ -21,9 +21,16 @@ const JobCard = ({ job, isMyJob = false, isSavedCard, onJobSave =()=>{} }) => { 
     loading: savedJobLoading,
     fn: savedJobFn,
   } = useFetch(saveJob,{isAlreadySaved: saved});
+
+  const {
+    loading: delJobLoading,
+    fn: delJobFn,
+    error: delJobError,
+  } = useFetch(deleteJob);
   
   const handleSaveJob = async () => {
     await savedJobFn({ job_id: job.id, user_id: user.id });
+    onJobSave()
     setsaved(!saved)
   };
 
@@ -33,11 +40,16 @@ const JobCard = ({ job, isMyJob = false, isSavedCard, onJobSave =()=>{} }) => { 
         <CardTitle className="flex justify-between font-bold">
           {job.title}
           {isMyJob && (
-            <Trash2Icon
-              fill="red"
-              size={18}
-              className="text-red-300 cursor-pointer"
-            ></Trash2Icon>
+            <Trash2
+              fill="none"
+              stroke="white"
+              size={24}
+              className={`text-red-300  ${delJobLoading? "opacity-50 cursor-progress":"opacity-100 cursor-pointer"}`}
+              onClick={() => {
+                 delJobFn(job.id).then(()=>jobFn());
+
+              }}
+            ></Trash2>
           )}
         </CardTitle>
       </CardHeader>

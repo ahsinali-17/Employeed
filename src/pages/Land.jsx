@@ -27,11 +27,8 @@ const LandingPage = () => {
             Find your Dream Job
             <span className="flex gap-2 lg:gap-6 items-center">
               and get
-              <img
-                src="/logo.png"
-                alt="hired"
-                className="h-14 sm:h-24 lg:h-32"
-              />
+              <span className="logo">Employeed</span>
+          <span className="text-4xl md:text-4xl text-pretty">.</span>
             </span>
           </h1>
           <p className="text-gray-300 sm:mt-4 text-xs sm:text-xl">

@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import { State } from "country-state-city";
 import useFetch from "@/hooks/useFetch";
 import { getCompanies } from "@/api/apiCompanies";
@@ -20,6 +21,7 @@ import { useUser } from "@clerk/clerk-react";
 import MDEditor from "@uiw/react-md-editor";
 import { Button } from "@/components/ui/button";
 import { Navigate, useNavigate } from "react-router-dom";
+import AddComDrawer from "@/components/AddComDrawer";
 
 const schema = z.object({
   title: z.string().min(1, { message: "Title cannot be empty" }),
@@ -34,7 +36,7 @@ const PostJob = () => {
     control,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm({
     defaultValues: { location: "", company_id: "", requirements: "" },
     resolver: zodResolver(schema),
@@ -61,17 +63,21 @@ const PostJob = () => {
   }, [isLoaded]);
 
   useEffect(() => {
-    if(addedJobData?.length > 0)
-      navigate(`/jobs`);
+    if (addedJobData?.length > 0){
+      console.log(addedJobData); 
+      navigate(`/jobs`);}
   }, [addJobLoading]);
 
-  const onSubmit =async (data) => {
-    addJobFn({...data,isOpen:true,recruiter_id:user.id}).then(()=> reset());
-  }
+  const onSubmit = async (data) => {
+    addJobFn({ ...data, isOpen: true, recruiter_id: user.id }).then(() =>
+      reset()
+    );
+  };
 
-  if(user?.unsafeMetadata?.role !== "recruiter")
+  if (isLoaded && user?.unsafeMetadata?.role !== "recruiter" ) {
+    console.log(user?.unsafeMetadata?.role);
     return <Navigate to="/jobs" />;
-
+  }
   if (!isLoaded || ComLoading)
     return (
       <div className="w-[100%] text-sky-500 mb-4 font-bold text-2xl text-center">
@@ -84,18 +90,23 @@ const PostJob = () => {
       <h1 className="gradient-title font-extrabold text-5xl sm:text-7xl text-center pb-8">
         Post a Job
       </h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-4 pb-0">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-4 p-4 pb-0"
+      >
         <Input placeholder="Job Title" {...register("title")} />
         {errors.title && <p className="text-red-500">{errors.title.message}</p>}
         <Textarea placeholder="Description" {...register("description")} />
-        {errors.description && <p className="text-red-500">{errors.description.message}</p>}
+        {errors.description && (
+          <p className="text-red-500">{errors.description.message}</p>
+        )}
 
         <div className="w-[90vw] mx-auto flex gap-4 items-center">
           <Controller
-           name="location"
+            name="location"
             control={control}
             render={({ field }) => (
-              <Select  onValueChange={field.onChange} >
+              <Select onValueChange={field.onChange}>
                 <SelectTrigger className="">
                   <SelectValue placeholder="Select a Location" />
                 </SelectTrigger>
@@ -106,25 +117,26 @@ const PostJob = () => {
                         <SelectItem key={name} value={name}>
                           {name}
                         </SelectItem>
-                      )
+                      );
                     })}
                   </SelectGroup>
                 </SelectContent>
               </Select>
-  )}
+            )}
           />
 
           <Controller
-          name="company_id"
+            name="company_id"
             control={control}
             render={({ field }) => (
-              <Select  onValueChange={field.onChange} >
+              <Select onValueChange={field.onChange}>
                 <SelectTrigger className="">
-                  <SelectValue placeholder= "Select a Company">
+                  <SelectValue placeholder="Select a Company">
                     {field.value
-                      ? ComData.find((company) => company.id == field.value)?.name
+                      ? ComData.find((company) => company.id == field.value)
+                          ?.name
                       : "Company"}
-                   </SelectValue> 
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
@@ -134,28 +146,39 @@ const PostJob = () => {
                           <SelectItem key={company.id} value={company.id}>
                             {company.name}
                           </SelectItem>
-                        )
+                        );
                       })}
                   </SelectGroup>
                 </SelectContent>
               </Select>
-  )}
+            )}
           />
           {/* Add a company */}
+          <AddComDrawer comFn={ComFn}/>
+
         </div>
-        {errors.location && <p className="text-red-500">{errors.location.message}</p>}
-        {errors.company_id && <p className="text-red-500">{errors.company_id.message}</p>}
-        
+
+        {errors.location && (
+          <p className="text-red-500">{errors.location.message}</p>
+        )}
+        {errors.company_id && (
+          <p className="text-red-500">{errors.company_id.message}</p>
+        )}
+
         <Controller
-        name="requirements"
+          name="requirements"
           control={control}
           render={({ field }) => (
-            <MDEditor value={field.value} onChange={field.onChange}/>
+            <MDEditor value={field.value} onChange={field.onChange} />
           )}
         />
-        {errors.requirements && <p className="text-red-500">{errors.requirements.message}</p>}
+        {errors.requirements && (
+          <p className="text-red-500">{errors.requirements.message}</p>
+        )}
         {addJobError && <p className="text-red-500">{addJobError.message}</p>}
-        <Button type="submit" variant="primary" className="mt-2" size="lg">{addJobLoading?"Submitting":"Submit"}</Button>
+        <Button type="submit" variant="primary" className="mt-2" size="lg">
+          {addJobLoading ? "Submitting" : "Submit"}
+        </Button>
       </form>
     </div>
   );

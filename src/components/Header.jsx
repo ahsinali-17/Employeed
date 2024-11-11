@@ -1,15 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "./ui/button";
-import { UserButton, SignedIn, SignedOut, SignIn, useUser} from "@clerk/clerk-react";
+import {
+  UserButton,
+  SignedIn,
+  SignedOut,
+  SignIn,
+  useUser,
+} from "@clerk/clerk-react";
 import { BriefcaseBusinessIcon, Heart, PenBox } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 const Header = () => {
   const [showSignIn, setshowSignIn] = useState(false);
   const [search, setSearch] = useSearchParams(); //returns an object with all the query params
-  const {user} = useUser()
-  const {pathname} = useLocation()
+  const { user } = useUser();
+  const { pathname } = useLocation();
+  const [userRole, setUserRole] = useState(user?.unsafeMetadata?.role);
+
+  useEffect(() => {
+    if (user?.unsafeMetadata?.role !== userRole) {
+      setUserRole(user?.unsafeMetadata?.role);
+      console.log("role changed", user?.unsafeMetadata?.role);
+    }
+  }, [user?.unsafeMetadata?.role]);
 
   useEffect(() => {
     if (search.get("sign-in")) setshowSignIn(true);
@@ -18,7 +32,8 @@ const Header = () => {
     <>
       <nav className="p-4 flex justify-between items-center">
         <Link>
-          <img src="/logo.png" alt="logo" className="h-20" />
+          <span className="logo gradient-title text-2xl md:text-4xl tracking-tighter italic font-bold">Employeed</span>
+          <span className="text-4xl md:text-4xl text-pretty">.</span>
         </Link>
         <div className="flex gap-8">
           <SignedOut>
@@ -34,17 +49,25 @@ const Header = () => {
           </SignedOut>
 
           <SignedIn>
-            {user?.unsafeMetadata?.role === "recruiter" && <Link to="/post-job">
-              <Button variant="destructive" className="rounded-full">
-                <PenBox size={20} className="mr-2" />
-                Post a Job
-              </Button>
-            </Link>}
-            {pathname !== '/onboarding' &&
-            <Button variant="primary" className="rounded-full" onClick={async()=>{await user.update({unsafeMetadata:{}});}}>
+            {user?.unsafeMetadata?.role === "recruiter" && (
+              <Link to="/post-job">
+                <Button variant="destructive" className="rounded-full">
+                  <PenBox size={20} className="mr-2" />
+                  Post a Job
+                </Button>
+              </Link>
+            )}
+            {pathname !== "/onboarding" && (
+              <Button
+                variant="primary"
+                className="rounded-full"
+                onClick={async () => {
+                  await user.update({ unsafeMetadata: {} });
+                }}
+              >
                 Switch Role
               </Button>
-}
+            )}
             <UserButton
               appearance={{
                 elements: {
@@ -55,18 +78,17 @@ const Header = () => {
               <UserButton.MenuItems>
                 <UserButton.Link
                   label="My jobs"
-                  labelIcon={
-                    <BriefcaseBusinessIcon size={15}/>
-                  }
+                  labelIcon={<BriefcaseBusinessIcon size={15} />}
                   href="/my-jobs"
                 />
-                <UserButton.Link
-                  label="Saved jobs"
-                  labelIcon={
-                    <Heart size={15}/>
-                  }
-                  href="/saved-jobs"
-                />
+
+                {user?.unsafeMetadata?.role === "candidate" && (
+                  <UserButton.Link
+                    label="Saved jobs"
+                    labelIcon={<Heart size={15} />}
+                    href="/saved-jobs"
+                  />
+                )}
               </UserButton.MenuItems>
             </UserButton>
           </SignedIn>
@@ -80,8 +102,8 @@ const Header = () => {
           }}
         >
           <SignIn
-          fallbackRedirectUrl= "/onboarding"
-          signUpForceRedirectUrl= "/onboarding"
+            fallbackRedirectUrl="/onboarding"
+            signUpForceRedirectUrl="/onboarding"
           />
         </div>
       )}

@@ -70,3 +70,24 @@ export async function insertJob(token,_ ,jobData){
     }
     return data;
 }
+
+export async function getSavedJobs(token){
+    const supabase = await supabaseClient(token);
+    const {data,error} = await supabase.from('saved-jobs').select('*,job: jobs(*, company: companies(name,logo_url))'); 
+    if (error) {
+        console.log("error getting saved jobs: " + error)
+        return null
+    }
+    return data;
+}
+
+export async function deleteJob(token,_,jobId){
+    const supabase = await supabaseClient(token);
+     
+       const {data,error:deleteError} = await supabase.from('jobs').delete().eq('id',jobId).select(); 
+       if(deleteError){
+        console.log("error deleting jobs: " + deleteError)
+        return null
+       }
+       return data;
+} 
