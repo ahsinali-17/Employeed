@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import {
   UserButton,
@@ -17,6 +18,7 @@ const Header = () => {
   const { user } = useUser();
   const { pathname } = useLocation();
   const [userRole, setUserRole] = useState(user?.unsafeMetadata?.role);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user?.unsafeMetadata?.role !== userRole) {
@@ -62,6 +64,9 @@ const Header = () => {
                 className="rounded-full"
                 onClick={ async () => {
                   await user.update({ unsafeMetadata: {} });
+                  if(pathname === "/") {
+                    navigate("/onboarding")
+                  }
                 }}
               >
                 Switch Role
