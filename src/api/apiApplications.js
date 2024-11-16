@@ -16,9 +16,9 @@ export async function insertApplication(token,_,applicationData){
     return data;
 }
 
-export async function updateApplication(token,{job_id},status){
+export async function updateApplication(token,{application_id},status){
     const supabase = await supabaseClient(token);
-    const {data,error} = await supabase.from('applications').update({status}).eq('job_id',job_id).select(); 
+    const {data,error} = await supabase.from('applications').update({status}).eq('id',application_id).select(); 
     if (error || data.length) {
         console.log("error updating application status: " + error)
         return null

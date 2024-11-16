@@ -52,6 +52,7 @@ const MyJobs = () => {
           <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {myJobs?.length ? (
               myJobs.map((job) => {
+                if(job.recruiter_id === user.id)
                 return (
                   <JobCard
                     key={job.id}

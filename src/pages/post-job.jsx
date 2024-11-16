@@ -63,9 +63,8 @@ const PostJob = () => {
   }, [isLoaded]);
 
   useEffect(() => {
-    if (addedJobData?.length > 0){
-      console.log(addedJobData); 
-      navigate(`/jobs`);}
+    if (addedJobData?.length > 0){ 
+      navigate(`/my-jobs`);}
   }, [addJobLoading]);
 
   const onSubmit = async (data) => {
@@ -75,7 +74,6 @@ const PostJob = () => {
   };
 
   if (isLoaded && user?.unsafeMetadata?.role !== "recruiter" ) {
-    console.log(user?.unsafeMetadata?.role);
     return <Navigate to="/jobs" />;
   }
   if (!isLoaded || ComLoading)
@@ -164,7 +162,7 @@ const PostJob = () => {
         {errors.company_id && (
           <p className="text-red-500">{errors.company_id.message}</p>
         )}
-
+        <h2 className="mt-3 text-2xl font-bold gradient-title">Requirements:</h2>
         <Controller
           name="requirements"
           control={control}

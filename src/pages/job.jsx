@@ -88,7 +88,7 @@ const Job = () => {
           <h2 className='text-2xl sm:text-3xl font-bold mb-3'>Applications</h2>
           <div className='flex flex-col gap-2'>
           {jobData?.applications.map((app)=>{
-               return <ApplicationCard key={app.id} jobFn={JobFn} application={app} />
+               return <div key={app.id}><ApplicationCard jobFn={JobFn} application={app} /></div>
           })}
           </div>
         </div>

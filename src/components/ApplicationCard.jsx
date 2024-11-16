@@ -28,7 +28,7 @@ const ApplicationCard = ({ jobFn, application, isCandidate = false }) => {
     data: updatedApplicationData,
     loading: updatingApplicationLoading,
     fn: updateApplicationFn,
-  } = useFetch(updateApplication, { job_id: application.job_id });
+  } = useFetch(updateApplication, { application_id: application.id });
 
   const {
     data: delAppData,
@@ -36,8 +36,9 @@ const ApplicationCard = ({ jobFn, application, isCandidate = false }) => {
     fn: delAppFn,
   } = useFetch(deleteApplication);
 
-  const handleApplicationStatus = async (value) => {
-    updateApplicationFn(value).then(() => jobFn());
+  const handleApplicationStatus = (status) => {
+    updateApplicationFn(status).then(() => {
+      jobFn()});
   };
 
   return (
@@ -98,13 +99,13 @@ const ApplicationCard = ({ jobFn, application, isCandidate = false }) => {
               Status: {application.status}
             </span>
           ) : (
-            <>
+            
               <Select
                 onValueChange={handleApplicationStatus}
                 defaultValue={application.status}
               >
                 <SelectTrigger
-                  className={`md:w-[180px] ${
+                  className={`md:w-[180px]  ${
                     application.status === "applied"
                       ? "bg-gray-500"
                       : application.status === "interviewing"
@@ -123,7 +124,7 @@ const ApplicationCard = ({ jobFn, application, isCandidate = false }) => {
                   <SelectItem value="rejected">Rejected</SelectItem>
                 </SelectContent>
               </Select>
-            </>
+            
           )}
         </CardFooter>
       </Card>

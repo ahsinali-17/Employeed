@@ -21,7 +21,6 @@ const Header = () => {
   useEffect(() => {
     if (user?.unsafeMetadata?.role !== userRole) {
       setUserRole(user?.unsafeMetadata?.role);
-      console.log("role changed", user?.unsafeMetadata?.role);
     }
   }, [user?.unsafeMetadata?.role]);
 
@@ -61,7 +60,7 @@ const Header = () => {
               <Button
                 variant="primary"
                 className="rounded-full"
-                onClick={async () => {
+                onClick={ async () => {
                   await user.update({ unsafeMetadata: {} });
                 }}
               >
