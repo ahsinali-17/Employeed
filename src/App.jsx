@@ -1,16 +1,16 @@
-import React,{ useState } from 'react'
+import React,{ useState, lazy} from 'react'
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import AppLayout from './layouts/AppLayout'
-import LandingPage from './pages/Land'
-import OnBoarding from './pages/onboarding'
-import JobListing from './pages/job-listing'
-import Job from './pages/job'
-import PostJob from './pages/post-job'
-import SavedJob from './pages/saved-job'
-import MyJobs from './pages/my-jobs'
+const LandingPage = lazy(() => import('./pages/Land'))
+const OnBoarding = lazy(() => import('./pages/onboarding'))
+const JobListing = lazy(() => import('./pages/job-listing'))
+const Job = lazy(() => import('./pages/job'))
+const PostJob = lazy(() => import('./pages/post-job'))
+const SavedJob = lazy(() => import('./pages/saved-job'))
+const MyJobs = lazy(() => import('./pages/my-jobs'))
+const ProtectedRoute = lazy(() => import('./components/ProtectedRoute'))
 import { ThemeProvider } from './components/theme-provider'
-import ProtectedRoute from './components/ProtectedRoute'
 
 
 function App() {
@@ -51,7 +51,9 @@ function App() {
   ])
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+     
       <RouterProvider router={router}/>
+      
       </ThemeProvider>
   )
 }
