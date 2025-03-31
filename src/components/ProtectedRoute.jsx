@@ -1,21 +1,29 @@
-import { useUser } from '@clerk/clerk-react'
-import React from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { useUser } from "@clerk/clerk-react";
+import React, { useEffect, useState } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 
-const ProtectedRoute = ({children}) => {
-    const{user,isSignedIn,isLoaded}=useUser()
-    const {pathname} = useLocation()  //get the current path after the domain name
-    if(isLoaded && !isSignedIn && isSignedIn!==undefined){
-      console.log(isSignedIn, user)
-     return <Navigate to='/?sign-in=true'/>
+const ProtectedRoute = ({ children }) => {
+  const { user, isSignedIn, isLoaded } = useUser();
+  const { pathname } = useLocation();
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    if (isLoaded) {
+      setCheckingAuth(false);
     }
+  }, [isLoaded]);
 
-    //check onboarding status
-    if(user !== undefined && !user?.unsafeMetadata?.role && pathname !== '/onboarding'){
-      return <Navigate to = '/onboarding'/>
-    }
-  return children
+  if (checkingAuth) return <div>Loading...</div>;
 
-}
+  if (!isSignedIn) {
+    return <Navigate to="/?sign-in=true" replace />;
+  }
 
-export default ProtectedRoute
+  if (!user?.unsafeMetadata?.role && pathname !== "/onboarding") {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  return children;
+};
+
+export default ProtectedRoute;
