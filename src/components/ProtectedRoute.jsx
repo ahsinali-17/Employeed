@@ -6,7 +6,7 @@ const ProtectedRoute = ({children}) => {
     const{user,isSignedIn,isLoaded}=useUser()
     const {pathname} = useLocation()  //get the current path after the domain name
     if(isLoaded && !isSignedIn && isSignedIn!==undefined){
-      
+      console.log(isSignedIn, user)
      return <Navigate to='/?sign-in=true'/>
     }
 
